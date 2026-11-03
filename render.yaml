@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: resonance-audio-studio
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    disk:
+      name: resonance-media
+      mountPath: /app/uploads
+      sizeGB: 5
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: WEB_DIST
+        value: /app/web/dist
+      - key: UPLOAD_DIR
+        value: /app/uploads
+      - key: PUBLIC_APP_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_TRANSCRIBE_MODEL
+        value: whisper-1
+      - key: MODEL_GATEWAY_URL
+        sync: false
+      - key: MODEL_GATEWAY_TOKEN
+        sync: false
+      - key: ACCESS_PASSWORD
+        sync: false
+      - key: TOKEN_SECRET
+        sync: false

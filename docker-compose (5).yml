@@ -1,0 +1,31 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    command: sleep infinity
+    init: true
+    volumes:
+      - ..:/workspaces/${localWorkspaceFolderBasename}:cached
+    working_dir: /workspaces/${localWorkspaceFolderBasename}
+    environment:
+      PORT: "8080"
+      MONGODB_URI: mongodb://mongo:27017/resonance
+      UPLOAD_DIR: /workspaces/${localWorkspaceFolderBasename}/uploads
+      PUBLIC_APP_URL: http://localhost:5173
+      TOKEN_SECRET: resonance-codespace-local-development-secret-change-for-deployment
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - resonance_codespace_mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  resonance_codespace_mongo:

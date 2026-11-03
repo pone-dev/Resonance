@@ -1,0 +1,14 @@
+{
+  "name": "resonance-ai-audio-studio",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["apps/web", "apps/api"],
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:web": "npm --workspace apps/web run dev -- --host 0.0.0.0",
+    "dev:api": "npm --workspace apps/api run dev",
+    "build": "npm --workspace apps/web run build && npm --workspace apps/api run build",
+    "start": "npm --workspace apps/api run start"
+  },
+  "devDependencies": {"concurrently": "^9.1.2"}
+}

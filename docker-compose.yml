@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  resonance:
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      CLIENT_ORIGIN: http://localhost:8080
+      PUBLIC_APP_URL: http://localhost:8080
+      MONGODB_URI: mongodb://mongo:27017/resonance
+      UPLOAD_DIR: /app/uploads
+      WEB_DIST: /app/web/dist
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_TRANSCRIBE_MODEL: ${OPENAI_TRANSCRIBE_MODEL:-whisper-1}
+      MODEL_GATEWAY_URL: ${MODEL_GATEWAY_URL:-}
+      MODEL_GATEWAY_TOKEN: ${MODEL_GATEWAY_TOKEN:-}
+      ACCESS_PASSWORD: ${ACCESS_PASSWORD:-}
+      TOKEN_SECRET: ${TOKEN_SECRET:-}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-250}
+    volumes:
+      - resonance_uploads:/app/uploads
+    ports: ["8080:8080"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+volumes:
+  mongo_data:
+  resonance_uploads:
